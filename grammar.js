@@ -138,7 +138,7 @@ module.exports = grammar({
       )),
       optional($.where_clause),
       optional($.tag),
-      optional(choice($.block, $.uninitialized)),
+      optional(field('body', choice($.block, $.uninitialized))),
     )),
 
     where_clause: $ => prec.right(seq('where', commaSep1(prec.right($.expression)))),
@@ -259,7 +259,8 @@ module.exports = grammar({
       ':',
       $.type,
       ':',
-      $.expression,
+      optional($.tag),
+      choice($._expression_no_tag, $.procedure),
     )),
 
     foreign_block: $ => seq(
@@ -464,6 +465,10 @@ module.exports = grammar({
       field('consequence', choice($.block, seq('do', $.statement))),
     ),
     _for_in_expression: $ => seq(
+      optional(seq(
+        optional(field('initializer', choice($.assignment_statement, $.update_statement, $.var_declaration))),
+        ';',
+      )),
       commaSep($.expression),
       'in',
       $.expression,
@@ -565,7 +570,7 @@ module.exports = grammar({
     ),
 
     unary_expression: $ => prec.right(PREC.UNARY, seq(
-      field('operator', choice('+', '-', '~', '!', '&')),
+      field('operator', choice('+', '-', '~', '!', '&', '**')),
       field('argument', $.expression),
     )),
 
@@ -839,6 +844,7 @@ module.exports = grammar({
       $.boolean,
       $.nil,
       $.uninitialized,
+      $.empty_struct_literal,
     )),
 
     struct: $ => seq(
@@ -854,6 +860,14 @@ module.exports = grammar({
       )),
       '}',
     ),
+
+    empty_struct_literal: $ => prec(1, seq(
+      'struct',
+      '{',
+      '}',
+      '{',
+      '}'
+    )),
 
     map: $ => seq(
       'map',

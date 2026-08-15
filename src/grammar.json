@@ -511,17 +511,21 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "block"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "uninitialized"
-                  }
-                ]
+                "type": "FIELD",
+                "name": "body",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "block"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "uninitialized"
+                    }
+                  ]
+                }
               },
               {
                 "type": "BLANK"
@@ -1549,8 +1553,29 @@
             "value": ":"
           },
           {
-            "type": "SYMBOL",
-            "name": "expression"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "tag"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression_no_tag"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "procedure"
+              }
+            ]
           }
         ]
       }
@@ -3163,6 +3188,52 @@
               "type": "SEQ",
               "members": [
                 {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "initializer",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "assignment_statement"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "update_statement"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "var_declaration"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
                   "type": "SYMBOL",
                   "name": "expression"
                 },
@@ -4016,6 +4087,10 @@
                 {
                   "type": "STRING",
                   "value": "&"
+                },
+                {
+                  "type": "STRING",
+                  "value": "**"
                 }
               ]
             }
@@ -6778,6 +6853,10 @@
           {
             "type": "SYMBOL",
             "name": "uninitialized"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "empty_struct_literal"
           }
         ]
       }
@@ -6975,6 +7054,35 @@
           "value": "}"
         }
       ]
+    },
+    "empty_struct_literal": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "struct"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          },
+          {
+            "type": "STRING",
+            "value": "}"
+          }
+        ]
+      }
     },
     "map": {
       "type": "SEQ",
@@ -7794,5 +7902,6 @@
     "expression",
     "literal",
     "statement"
-  ]
+  ],
+  "reserved": {}
 }
